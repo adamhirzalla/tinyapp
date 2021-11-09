@@ -13,19 +13,25 @@ app.listen(PORT, ()=>{
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+// root or homepage
 app.get('/', (req,res)=>{
   res.send('Hello!');
 });
 
-const templateVars = { urls: urlDatabase };
+// url page showing all urls
 app.get('/urls', (req,res)=>{
+  const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+// specific url endpoints using shortended form
+app.get('/urls/:shortURL', (req,res)=>{
+  const shortURL = req.params.shortURL;
+  const templateVars = { urls: urlDatabase, shortURL, longURL: urlDatabase[shortURL]};
+  res.render('urls_show', templateVars);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+// shows the urls json object
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
 });
