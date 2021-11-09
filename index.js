@@ -58,7 +58,7 @@ app.get("/urls/new", (req, res) => {
 // GET - specific url endpoints using shortended form
 app.get('/urls/:shortURL', (req,res)=>{
   const shortURL = req.params.shortURL;
-  const templateVars = { urls: urlDatabase, shortURL, longURL: urlDatabase[shortURL]};
+  const templateVars = { urls: urlDatabase, shortURL};
   res.render('urls_show', templateVars);
 });
 
@@ -79,10 +79,17 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-// POST - handling posts form /urls
+// POST - handling edit to /urls/:shortURL/edit
+app.post("/urls/:shortURL/edit", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+  res.redirect('/urls');
+});
+
+// POST - handling delete form /urls/:shortURL/delete
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
-  console.log(shortURL);
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
