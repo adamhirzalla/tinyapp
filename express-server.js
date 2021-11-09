@@ -46,19 +46,23 @@ app.get('/urls/:shortURL', (req,res)=>{
   res.render('urls_show', templateVars);
 });
 
+// generate random 6 char string
 const generateRandomString = () => {
-  let result = '';
-  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let charactersLength = characters.length;
-  for (let i = 0; i < 6; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  let random = '';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charLength = chars.length;
+  const randomLength = 6;
+  for (let i = 0; i < randomLength; i++) {
+    random += chars.charAt(Math.floor(Math.random() * charLength));
   }
-  return result;
+  return random;
 };
 
 // handling form POST
 app.post("/urls", (req, res) => {
+  const shortURL = generateRandomString();
   console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  urlDatabase[shortURL] = req.body.longURL;
+  res.redirect(`/urls/${shortURL}`);
 });
 
