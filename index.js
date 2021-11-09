@@ -73,10 +73,8 @@ app.get('/u/:shortURL', (req,res)=>{
 // POST - handling posts form /urls
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  console.log(req.body);  // Log the POST request body to the console
   urlDatabase[shortURL] = req.body.longURL;
-  res.statusCode = 200;
-  res.redirect(`/urls/${shortURL}`);
+  res.redirect(`/urls`);
 });
 
 // POST - handling delete form /urls/:shortURL/delete
