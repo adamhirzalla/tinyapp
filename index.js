@@ -6,7 +6,7 @@ const PORT = 8080;
 app.set('view engine', 'ejs');
 
 // using express's bodyparser to handle request body from buffer
-app.use(express.urlencoded());
+app.use(express.urlencoded({extended: false}));
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -14,7 +14,7 @@ const urlDatabase = {
 };
 
 app.listen(PORT, ()=>{
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tinyapp listening on port ${PORT}!`);
 });
 
 // root or homepage
