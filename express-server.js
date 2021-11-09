@@ -18,10 +18,20 @@ app.get('/', (req,res)=>{
   res.send('Hello!');
 });
 
+// shows the urls json object
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
+
 // url page showing all urls
 app.get('/urls', (req,res)=>{
   const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
+});
+
+// POSTing new url
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
 });
 
 // specific url endpoints using shortended form
@@ -31,7 +41,4 @@ app.get('/urls/:shortURL', (req,res)=>{
   res.render('urls_show', templateVars);
 });
 
-// shows the urls json object
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
+
