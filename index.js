@@ -1,3 +1,4 @@
+const cookieParser = require('cookie-parser');
 const express = require('express');
 const app = express();
 const PORT = 8080;
@@ -8,6 +9,7 @@ const PORT = 8080;
 // using express's bodyparser to handle request body from buffer
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
+app.use(cookieParser());
 
 app.listen(PORT, ()=>{
   console.log(`Tinyapp listening on port ${PORT}!`);
@@ -41,7 +43,7 @@ app.get('/', (req,res)=>{
 
 // GET - url page showing all urls
 app.get('/urls', (req,res)=>{
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username: req.cookies.username };
   res.render('urls_index', templateVars);
 });
 
@@ -52,13 +54,14 @@ app.get("/urls.json", (req, res) => {
 
 // GET - page to creating new urls
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { username: req.cookies.username };
+  res.render("urls_new", templateVars);
 });
 
 // GET - specific url endpoints using shortended form
 app.get('/urls/:shortURL', (req,res)=>{
   const shortURL = req.params.shortURL;
-  const templateVars = { urls: urlDatabase, shortURL};
+  const templateVars = { urls: urlDatabase, shortURL, username: req.cookies.username };
   res.render('urls_show', templateVars);
 });
 
@@ -89,5 +92,18 @@ app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
+  res.redirect('/urls');
+});
+
+// POST - handling logins
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  res.cookie('username', username);
+  res.redirect('/urls');
+});
+
+// POST - handling logouts
+app.post("/logout", (req, res) => {
+  res.cookie('username', '');
   res.redirect('/urls');
 });
