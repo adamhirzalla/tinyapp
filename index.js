@@ -79,6 +79,13 @@ app.get('/register', (req,res)=>{
   res.render('register', templateVars);
 });
 
+// GET - login page
+app.get('/login', (req,res)=>{
+  const user = users[req.cookies['user_id']];
+  const templateVars = { user };
+  res.render('login', templateVars);
+});
+
 // GET - url page showing all urls
 app.get('/urls', (req,res)=>{
   const user = users[req.cookies['user_id']];

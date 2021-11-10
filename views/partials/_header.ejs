@@ -9,19 +9,11 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
        <%if (!user) {%>
-        <a class="nav-item nav-link" href="/register">Register Account</a>
+        <a class="nav-item nav-link" href="/login">Login</a>
         <%}%>
+        <a class="nav-item nav-link" href="/register">Register</a>
       </div>
-      <%if (!user) {%>
-      <form class="form-inline ml-auto" action="/login" method="post"> 
-        <div class="form-group mb-2">
-          <input class="form-control" type="email" name="email" placeholder="email" >
-        </div>
-        <div class="form-group mb-2">
-          <button type="submit" class="btn btn-primary ml-1">Login</button>
-        </div>
-      </form>
-      <%} else {%>
+      <%if (user) {%>
         <form class="form-inline ml-auto" action="/logout" method="post">
             <div class="text-light pr-3">
                <h5>Welcome, <i class="text-info"><%=user.email.toUpperCase()%></i> 😎</h5>
