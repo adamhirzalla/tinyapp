@@ -41,6 +41,12 @@ app.get('/', (req,res)=>{
   res.send('Hello!');
 });
 
+// GET - registration page allowing users to register w email/pass
+app.get('/register', (req,res)=>{
+  const templateVars = { username: req.cookies.username };
+  res.render('register', templateVars);
+});
+
 // GET - url page showing all urls
 app.get('/urls', (req,res)=>{
   const templateVars = { urls: urlDatabase, username: req.cookies.username };
