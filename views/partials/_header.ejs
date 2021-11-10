@@ -1,5 +1,5 @@
 <header>
-  <nav class="navbar navbar-expand-md navbar-dark bg-success">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <a class="navbar-brand" href="/urls">TinyApp</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -12,19 +12,20 @@
       <%if (!username) {%>
       <form class="form-inline ml-auto" action="/login" method="post"> 
         <div class="form-group mb-2">
-          <input class="form-control" type="text" name="username" placeholder="Username" style="width: 200px; margin: 1em">
+          <input class="form-control" type="text" name="username" placeholder="Username" >
         </div>
         <div class="form-group mb-2">
-          <button type="submit" class="btn btn-primary">Login</button>
+          <button type="submit" class="btn btn-primary ml-1">Login</button>
         </div>
       </form>
       <%} else {%>
         <form class="form-inline ml-auto" action="/logout" method="post">
-          <div class="card-body" >
-            <h5 class="card-title">Logged in As: <%=username%>! </h5>
-          </div>
+            <div class="text-light pr-3">
+               <h5>Welcome, <i class="text-info"><%=username.toUpperCase()%></i> 😎</h5>
+              </div>
+         
           <div class="form-group mb-2">
-            <button type="submit" class="btn btn-outline-warning">Logout</button>
+            <button type="submit" class="btn btn-warning">Logout</button>
           </div>
         </form>
       <%}%>
