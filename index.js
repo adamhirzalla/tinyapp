@@ -15,22 +15,53 @@ app.listen(PORT, ()=>{
   console.log(`Tinyapp listening on port ${PORT}!`);
 });
 
-// DATABSE - local db
+// DATABASE //
+// URLs
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
+  "k2Ue0M": "http://www.google.com"
 };
 
+// Users
+const users = {
+  "012345": {
+    id: "012345",
+    email: "user1@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+  "678901": {
+    id: "678901",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  },
+  "ABCDEF": {
+    id: "ABCDEF",
+    email: "user3@example.com",
+    password: "qwerty"
+  }
+};
+
+// HELPER FUNCTIONS //
 // generate random 6 char string
-const generateRandomString = () => {
+const generateRandomString = (randomLength) => {
   let random = '';
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charLength = chars.length;
-  const randomLength = 6;
   for (let i = 0; i < randomLength; i++) {
     random += chars.charAt(Math.floor(Math.random() * charLength));
   }
   return random;
+};
+
+// check if an email already exists in users
+const checkEmailExist = (users, email) =>{
+  for (const user in users) {
+    if (users[user].email === email) {
+      return true;
+    }
+  }
+  return false;
 };
 
 // ROUTING //
@@ -43,13 +74,15 @@ app.get('/', (req,res)=>{
 
 // GET - registration page allowing users to register w email/pass
 app.get('/register', (req,res)=>{
-  const templateVars = { username: req.cookies.username };
+  const user = users[req.cookies['user_id']];
+  const templateVars = { user };
   res.render('register', templateVars);
 });
 
 // GET - url page showing all urls
 app.get('/urls', (req,res)=>{
-  const templateVars = { urls: urlDatabase, username: req.cookies.username };
+  const user = users[req.cookies['user_id']];
+  const templateVars = { urls: urlDatabase, user };
   res.render('urls_index', templateVars);
 });
 
@@ -60,14 +93,16 @@ app.get("/urls.json", (req, res) => {
 
 // GET - page to creating new urls
 app.get("/urls/new", (req, res) => {
-  const templateVars = { username: req.cookies.username };
+  const user = users[req.cookies['user_id']];
+  const templateVars = { user };
   res.render("urls_new", templateVars);
 });
 
 // GET - specific url endpoints using shortended form
 app.get('/urls/:shortURL', (req,res)=>{
   const shortURL = req.params.shortURL;
-  const templateVars = { urls: urlDatabase, shortURL, username: req.cookies.username };
+  const user = users[req.cookies['user_id']];
+  const templateVars = { urls: urlDatabase, shortURL, user };
   res.render('urls_show', templateVars);
 });
 
@@ -81,7 +116,7 @@ app.get('/u/:shortURL', (req,res)=>{
 // POST //
 // POST - handling posts form /urls
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
+  const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls`);
 });
@@ -110,6 +145,22 @@ app.post("/login", (req, res) => {
 
 // POST - handling logouts
 app.post("/logout", (req, res) => {
-  res.cookie('username', '');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
+
+// POST - handling registrations
+app.post("/register", (req, res) => {
+  const {email, password} = req.body;
+  if (!email || !password) {
+    return res.status(400).send('Error 400: email/password cant be empty');
+  }
+  if (checkEmailExist(users, email)) {
+    return res.status(400).send('Error 400: email already exists');
+  }
+  const id = generateRandomString(6);
+  users[id] = {id,email,password};
+  res.cookie('user_id', id);
+  res.redirect('/urls');
+});
+
