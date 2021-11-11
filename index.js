@@ -138,12 +138,18 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-// GET - specific url endpoints using shortended form
+// GET - view specific url endpoints using shortended form
 app.get('/urls/:shortURL', (req,res)=>{
   const shortURL = req.params.shortURL;
   const user = users[req.cookies['user_id']];
-  if (!user || urlDatabase[shortURL].userID !== user.id) {
-    return res.status(401).send('Error 401: unauthorized');
+  if (!user) {
+    return res.status(401).send('Error 401: unauthorized. Login/register first');
+  }
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send('Error 404: link does not exist');
+  }
+  if (urlDatabase[shortURL].userID !== user.id) {
+    return res.status(401).send('Error 401: unauthorized. url does not belong to you');
   }
   const templateVars = { urls: urlDatabase, shortURL, user };
   res.render('urls_show', templateVars);
@@ -165,7 +171,7 @@ app.post("/urls", (req, res) => {
   const user = users[req.cookies['user_id']];
   const longURL = `https://www.${req.body.longURL}`;
   if (!user) {
-    return res.status(401).send('Error 401: unauthorized. Login or register to create a link');
+    return res.status(401).send('Error 401: unauthorized. Cant create url: Login/register first');
   }
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = { longURL, userID: user.id };
@@ -175,10 +181,16 @@ app.post("/urls", (req, res) => {
 // POST - handling delete form /urls/:shortURL/delete
 app.post("/urls/:shortURL/delete", (req, res) => {
   const user = users[req.cookies['user_id']];
-  if (!user) {
-    return res.status(401).send('Error 401: unauthorized. Login or register to delete a link');
-  }
   const shortURL = req.params.shortURL;
+  if (!user) {
+    return res.status(401).send('Error 401: unauthorized. Cant delete: Login/register first');
+  }
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send('Error 404: link does not exist');
+  }
+  if (urlDatabase[shortURL].userID !== user.id) {
+    return res.status(401).send('Error 401: unauthorized. Cant delete: url does not belong to you');
+  }
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
@@ -186,8 +198,17 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 // POST - handling edit to /urls/:shortURL/edit
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = req.body.longURL;
   const user = users[req.cookies['user_id']];
+  const longURL = req.body.longURL;
+  if (!user) {
+    return res.status(401).send('Error 401: unauthorized. Cant edit: Login/register first');
+  }
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send('Error 404: link does not exist');
+  }
+  if (urlDatabase[shortURL].userID !== user.id) {
+    return res.status(401).send('Error 401: unauthorized. Cant edit: url does not belong to you');
+  }
   urlDatabase[shortURL].longURL = `https://www.${longURL}`;
   urlDatabase[shortURL].userID = user.id;
   res.redirect('/urls');
