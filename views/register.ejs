@@ -6,9 +6,9 @@
   <title>TinyApp - Register</title>
 </head>
 <%- include('./partials/_header') %>
-<body>
-  <main>
-    <h3 class="text-center" >Register Account</h3>
+<body style="background-color: rgb(24,24,24);">
+  <main class="text-warning" style="margin: 1em;">
+    <h3 class="text-center pb-2" >Register Account</h3>
     <form class="ml-3 form-inline" action="/register" method="POST">
       <div class="mb-2 ml-auto mr-auto">
         <div class="form-group mb-2 ml-auto mr-auto">
@@ -19,7 +19,7 @@
           <label for="password" class="text-center">Password:</label>
           <input type="password" class="form-control ml-auto" name="password" placeholder="Password" style="width: 250px">
         </div>
-        <button type="submit" class="btn btn-primary float-right">Register</button>
+        <button type="submit" class="btn btn-outline-warning float-right">Register</button>
       </div>
     </form>
   </main>

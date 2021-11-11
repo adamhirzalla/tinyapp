@@ -8,9 +8,9 @@
     <title>TinyApp - New URL</title>
   </head>
   <%- include('partials/_header') %>
-  <body>
-    <main class="text-center" style="margin: 1em;">
-      <h3 >Create TinyURL</h3>
+  <body style="background-color: rgb(24,24,24);">
+    <main class="text-center text-warning" style="margin: 1em;">
+      <h3 class="pb-2">Create TinyURL</h3>
       <form class="form-inline" action="/urls" method="POST">
         <div class="form-group mb-2 ml-auto mr-auto">
           <label for="longURL">Enter a URL:</label>
@@ -18,9 +18,9 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="basic-addon">https://www.</span>
             </div>
-            <input class="form-control" type="text" name="longURL" placeholder="google.com" style="width: 300px">
+            <input class="form-control" type="text" name="longURL" placeholder="google.com" style="width: 275px">
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-outline-warning">Submit</button>
         </div>
       </form>
     </main>

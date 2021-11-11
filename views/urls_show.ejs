@@ -6,19 +6,18 @@
   <title>TinyApp - URL view</title>
 </head>
 <%- include('./partials/_header') %>
-<body>
-  <div class="card text-center">
+<body style="background-color: rgb(24,24,24);">
+  <div class="card text-center" style="background-color: rgb(24,24,24);">
       <div class="card-header"></div>
-      <div class="card-body">
-        <h5 class="card-title">TinyURL for: <%= urls[shortURL].longURL %></h5>
+      <div class="card-body text-warning">
+        <h5 class="card-title ">TinyURL for: <a href="<%- urls[shortURL].longURL %>" class="text-light"><%= urls[shortURL].longURL %></a></h5>
         <p class="card-text">Short URL: <a href="/u/<%-shortURL%>"><%=shortURL%></a></p>
       </div>
-    <div class="card-footer text-muted">
-      <div class="card-body">
-        <h2 class="card-title">Edit</h5>
+    <div class="card-footer text-muted" style="background-color: rgb(53,53,53);">
+      <div class="card-body my-auto">
         <form class="form-inline justify-content-center" action="/urls/<%-shortURL%>" method="POST">
           <div class="form-group mb-2 ml-auto mr-auto">
-            <label for="longURL">New URL:</label>
+            <label class="text-warning" for="longURL">New URL:</label>
             <div class="input-group mb-auto ml-2 mr-1">
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon">https://www.</span>
