@@ -78,6 +78,21 @@ const lookUpEmail = (users, email) =>{
   return false;
 };
 
+// returns urls belonging to specific user
+const ownedURLs = (allURLs, user) =>{
+  const result = {};
+  if (user) {
+    const userId = user.id;
+    for (const shortURL in allURLs) {
+      if (allURLs[shortURL].userID === userId) {
+        const { longURL, userID } = allURLs[shortURL];
+        result[shortURL] = { longURL, userID };
+      }
+    }
+  }
+  return result;
+};
+
 // ROUTING //
 
 // GET //
@@ -103,7 +118,8 @@ app.get('/login', (req,res)=>{
 // GET - url page showing all urls
 app.get('/urls', (req,res)=>{
   const user = users[req.cookies['user_id']];
-  const templateVars = { urls: urlDatabase, user };
+  const urls = ownedURLs(urlDatabase, user);
+  const templateVars = { urls, user };
   res.render('urls_index', templateVars);
 });
 
@@ -126,8 +142,8 @@ app.get("/urls/new", (req, res) => {
 app.get('/urls/:shortURL', (req,res)=>{
   const shortURL = req.params.shortURL;
   const user = users[req.cookies['user_id']];
-  if (!user) {
-    return res.status(401).send('Error 401: unauthorized. Login or register to edit a link');
+  if (!user || urlDatabase[shortURL].userID !== user.id) {
+    return res.status(401).send('Error 401: unauthorized');
   }
   const templateVars = { urls: urlDatabase, shortURL, user };
   res.render('urls_show', templateVars);

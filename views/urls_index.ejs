@@ -14,6 +14,11 @@
     <!-- <h3 class="text-center">My URLs</h3> -->
     <table class="table text-center table-striped table-bordered">
       <thead class="thead-light">
+        <% if (!user) { %>
+          <tr class="text-danger">
+            <td><strong>Login to view your URLs</strong></td>
+          </tr>
+        <% } else { %>
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
@@ -22,21 +27,22 @@
         </tr>
       </thead>
       <tbody>
-        <% for(let shortURL in urls) { %>
-          <tr>
-            <td><a href="/u/<%-shortURL%>"><%=shortURL%></a></td>
-            <td><%= urls[shortURL].longURL %></td>
-            <td>
-              <form method="get" action="/urls/<%-shortURL%>">
-                <button type="submit" class="btn btn-outline-primary">Edit</button>
-              </form>
-            </td>
-            <td>
-              <form method="POST" action="/urls/<%-shortURL%>/delete">
-                <button type="submit" class="btn btn-outline-danger">Delete</button>
-              </form>
-            </td>
-          </tr>
+          <% for(let shortURL in urls) { %>
+              <tr>
+                <td><a href="/u/<%-shortURL%>"><%=shortURL%></a></td>
+                <td><%= urls[shortURL].longURL %></td>
+                <td>
+                  <form method="get" action="/urls/<%-shortURL%>">
+                    <button type="submit" class="btn btn-outline-primary">Edit</button>
+                  </form>
+                </td>
+                <td>
+                  <form method="POST" action="/urls/<%-shortURL%>/delete">
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+          <% } %>
         <% } %>
       </tbody>
     </table>
