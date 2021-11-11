@@ -101,6 +101,9 @@ app.get("/urls.json", (req, res) => {
 // GET - page to creating new urls
 app.get("/urls/new", (req, res) => {
   const user = users[req.cookies['user_id']];
+  if (!user) {
+    return res.status(401).redirect('/urls');
+  }
   const templateVars = { user };
   res.render("urls_new", templateVars);
 });
@@ -123,6 +126,10 @@ app.get('/u/:shortURL', (req,res)=>{
 // POST //
 // POST - handling posts form /urls
 app.post("/urls", (req, res) => {
+  const user = users[req.cookies['user_id']];
+  if (!user) {
+    return res.status(401).send('Error 401: unauthorized. Login or register');
+  }
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls`);
