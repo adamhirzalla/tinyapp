@@ -11,14 +11,13 @@ const generateRandomString = (randomLength) => {
   return random;
 };
 
-// check if an email already exists in users, if yes, return the user
+// check if an email already exists in users, if yes, return the user id
 const lookUpEmail = (users, email) =>{
   for (const id in users) {
     if (users[id].email.toLowerCase() === email.toLowerCase()) {
       return id;
     }
   }
-  return false;
 };
 
 // returns urls belonging to specific user
