@@ -1,13 +1,17 @@
+// IMPORTS //
+//
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
-const app = express();
-const PORT = 8080;
+const bcrypt = require('bcryptjs');
+const { urlDatabase, users } = require('./database');
+const { generateRandomString, lookUpEmail, ownedURLs } = require('./helpers');
 
 // CONFIG //
 //
 // setting ejs as the view engine
 // using express's bodyparser to handle request body from buffer
+const app = express();
+const PORT = 8080;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 app.use(cookieSession({
@@ -15,90 +19,12 @@ app.use(cookieSession({
   keys: ['imagine trying', 'to steal', 'my COOKIES', 'OMEGALUL'],
   maxAge: 12 * 60 * 60 * 1000, // expires after 12 hrs
 }));
-
 app.listen(PORT, ()=>{
   console.log(`Tinyapp listening on port ${PORT}!`);
 });
 
-// DATABASE //
-// URLs
-const urlDatabase = {
-  "b2xVn2": {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: '012345'
-  },
-  "9sm5xK": {
-    longURL: "http://www.google.com",
-    userID: '012345'
-  },
-  "k2Ue0M": {
-    longURL: "http://www.google.ca",
-    userID: 'ABCDEF'
-  },
-  "ttv": {
-    longURL: "http://www.twitch.tv",
-    userID: 'Adam'
-  },
-};
-
-// Users
-const users = {
-  "012345": {
-    id: "012345",
-    email: "user1@example.com",
-    password: "$2a$10$oxHE1s2UbX.yCl2lc3w3vO18ql9r47igcjy2LhOdUHl.1Lz/ZgiL2" // = 123
-  },
-  "ABCDEF": {
-    id: "ABCDEF",
-    email: "user2@example.com",
-    password: "$2a$10$LQCHtopu3/CDfipUoyhiMeivX6UHoBDzONd68F.d.l2sB1lE1/spW" // = 123
-  },
-  "Adam": {
-    id: "Adam",
-    email: "Adam@hirzalla.ca",
-    password: "$2a$10$LYaJq7uKEiGZcpgXWHIMKu0azGMHjwyU29fOFjNdedpOxCojp5jb2" // = empty pass
-  }
-};
-
-// HELPER FUNCTIONS //
-// generate random 6 char string
-const generateRandomString = (randomLength) => {
-  let random = '';
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charLength = chars.length;
-  for (let i = 0; i < randomLength; i++) {
-    random += chars.charAt(Math.floor(Math.random() * charLength));
-  }
-  return random;
-};
-
-// check if an email already exists in users
-const lookUpEmail = (users, email) =>{
-  for (const id in users) {
-    if (users[id].email.toLowerCase() === email.toLowerCase()) {
-      return id;
-    }
-  }
-  return false;
-};
-
-// returns urls belonging to specific user
-const ownedURLs = (allURLs, user) =>{
-  const result = {};
-  if (user) {
-    const userId = user.id;
-    for (const shortURL in allURLs) {
-      if (allURLs[shortURL].userID === userId) {
-        const { longURL, userID } = allURLs[shortURL];
-        result[shortURL] = { longURL, userID };
-      }
-    }
-  }
-  return result;
-};
-
 // ROUTING //
-
+//
 // GET //
 // GET - root or homepage
 app.get('/', (req,res)=>{
