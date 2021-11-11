@@ -14,7 +14,12 @@
       <form class="form-inline" action="/urls" method="POST">
         <div class="form-group mb-2 ml-auto mr-auto">
           <label for="longURL">Enter a URL:</label>
-          <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
+          <div class="input-group mb-auto ml-2 mr-1">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon">https://www.</span>
+            </div>
+            <input class="form-control" type="text" name="longURL" placeholder="google.com" style="width: 300px">
+          </div>
           <button type="submit" class="btn btn-primary">Submit</button>
         </div>
       </form>
