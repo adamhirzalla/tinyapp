@@ -126,6 +126,9 @@ app.get("/urls/new", (req, res) => {
 app.get('/urls/:shortURL', (req,res)=>{
   const shortURL = req.params.shortURL;
   const user = users[req.cookies['user_id']];
+  if (!user) {
+    return res.status(401).send('Error 401: unauthorized. Login or register to edit a link');
+  }
   const templateVars = { urls: urlDatabase, shortURL, user };
   res.render('urls_show', templateVars);
 });
@@ -133,6 +136,9 @@ app.get('/urls/:shortURL', (req,res)=>{
 // GET - redirect from /u/:shortURL to longURL
 app.get('/u/:shortURL', (req,res)=>{
   const shortURL = req.params.shortURL;
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send('Error 404: link does not exist');
+  }
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
@@ -143,7 +149,7 @@ app.post("/urls", (req, res) => {
   const user = users[req.cookies['user_id']];
   const longURL = `https://www.${req.body.longURL}`;
   if (!user) {
-    return res.status(401).send('Error 401: unauthorized. Login or register');
+    return res.status(401).send('Error 401: unauthorized. Login or register to create a link');
   }
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = { longURL, userID: user.id };
@@ -152,6 +158,10 @@ app.post("/urls", (req, res) => {
 
 // POST - handling delete form /urls/:shortURL/delete
 app.post("/urls/:shortURL/delete", (req, res) => {
+  const user = users[req.cookies['user_id']];
+  if (!user) {
+    return res.status(401).send('Error 401: unauthorized. Login or register to delete a link');
+  }
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
   res.redirect('/urls');
