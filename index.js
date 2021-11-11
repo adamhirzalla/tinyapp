@@ -1,5 +1,6 @@
 const cookieParser = require('cookie-parser');
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
 
@@ -30,6 +31,10 @@ const urlDatabase = {
     longURL: "http://www.google.ca",
     userID: 'ABCDEF'
   },
+  "ttv": {
+    longURL: "http://www.twitch.tv",
+    userID: 'Adam'
+  },
 };
 
 // Users
@@ -37,22 +42,17 @@ const users = {
   "012345": {
     id: "012345",
     email: "user1@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-  "678901": {
-    id: "678901",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: "$2a$10$oxHE1s2UbX.yCl2lc3w3vO18ql9r47igcjy2LhOdUHl.1Lz/ZgiL2" // = 123
   },
   "ABCDEF": {
     id: "ABCDEF",
-    email: "user3@example.com",
-    password: "qwerty"
+    email: "user2@example.com",
+    password: "$2a$10$LQCHtopu3/CDfipUoyhiMeivX6UHoBDzONd68F.d.l2sB1lE1/spW" // = 123
   },
   "Adam": {
     id: "Adam",
-    email: "adamhirzalla@outlook.com",
-    password: ""
+    email: "Adam@hirzalla.ca",
+    password: "$2a$10$LYaJq7uKEiGZcpgXWHIMKu0azGMHjwyU29fOFjNdedpOxCojp5jb2" // = empty pass
   }
 };
 
@@ -71,7 +71,7 @@ const generateRandomString = (randomLength) => {
 // check if an email already exists in users
 const lookUpEmail = (users, email) =>{
   for (const id in users) {
-    if (users[id].email === email) {
+    if (users[id].email.toLowerCase() === email.toLowerCase()) {
       return id;
     }
   }
@@ -221,11 +221,13 @@ app.post("/login", (req, res) => {
   if (!id) {
     return res.status(403).send('Error 403: account doesnt exist');
   }
-  if (users[id].password !== password) {
-    return res.status(403).send('Error 403: password doesnt match');
-  }
-  res.cookie('user_id', id);
-  res.redirect('/urls');
+  bcrypt.compare(password, users[id].password).then(match => {
+    if (!match) {
+      return res.status(403).send('Error 403: password doesnt match');
+    }
+    res.cookie('user_id', id);
+    res.redirect('/urls');
+  });
 });
 
 // POST - handling logouts
@@ -243,8 +245,9 @@ app.post("/register", (req, res) => {
   if (lookUpEmail(users, email)) {
     return res.status(400).send('Error 400: email already exists');
   }
-  const id = generateRandomString(6);
-  users[id] = {id,email,password};
-  res.redirect('/urls');
+  bcrypt.hash(password, 10).then(hashed => {
+    const id = generateRandomString(6);
+    users[id] = {id, email, password: hashed};
+    res.redirect('/urls');
+  });
 });
-
