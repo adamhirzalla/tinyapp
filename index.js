@@ -1,6 +1,6 @@
-const cookieParser = require('cookie-parser');
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const cookieSession = require('cookie-session');
 const app = express();
 const PORT = 8080;
 
@@ -10,7 +10,11 @@ const PORT = 8080;
 // using express's bodyparser to handle request body from buffer
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['imagine trying', 'to steal', 'my COOKIES', 'OMEGALUL'],
+  maxAge: 12 * 60 * 60 * 1000, // expires after 12 hrs
+}));
 
 app.listen(PORT, ()=>{
   console.log(`Tinyapp listening on port ${PORT}!`);
@@ -103,21 +107,21 @@ app.get('/', (req,res)=>{
 
 // GET - registration page allowing users to register w email/pass
 app.get('/register', (req,res)=>{
-  const user = users[req.cookies['user_id']];
+  const user = users[req.session['user_id']];
   const templateVars = { user };
   res.render('register', templateVars);
 });
 
 // GET - login page
 app.get('/login', (req,res)=>{
-  const user = users[req.cookies['user_id']];
+  const user = users[req.session['user_id']];
   const templateVars = { user };
   res.render('login', templateVars);
 });
 
 // GET - url page showing all urls
 app.get('/urls', (req,res)=>{
-  const user = users[req.cookies['user_id']];
+  const user = users[req.session['user_id']];
   const urls = ownedURLs(urlDatabase, user);
   const templateVars = { urls, user };
   res.render('urls_index', templateVars);
@@ -130,7 +134,7 @@ app.get("/urls.json", (req, res) => {
 
 // GET - page to creating new urls
 app.get("/urls/new", (req, res) => {
-  const user = users[req.cookies['user_id']];
+  const user = users[req.session['user_id']];
   if (!user) {
     return res.status(401).redirect('/urls');
   }
@@ -141,7 +145,7 @@ app.get("/urls/new", (req, res) => {
 // GET - view specific url endpoints using shortended form
 app.get('/urls/:shortURL', (req,res)=>{
   const shortURL = req.params.shortURL;
-  const user = users[req.cookies['user_id']];
+  const user = users[req.session['user_id']];
   if (!user) {
     return res.status(401).send('Error 401: unauthorized. Login/register first');
   }
@@ -168,7 +172,7 @@ app.get('/u/:shortURL', (req,res)=>{
 // POST //
 // POST - handling creating new urls
 app.post("/urls", (req, res) => {
-  const user = users[req.cookies['user_id']];
+  const user = users[req.session['user_id']];
   const longURL = `https://www.${req.body.longURL}`;
   if (!user) {
     return res.status(401).send('Error 401: unauthorized. Cant create url: Login/register first');
@@ -180,7 +184,7 @@ app.post("/urls", (req, res) => {
 
 // POST - handling delete form /urls/:shortURL/delete
 app.post("/urls/:shortURL/delete", (req, res) => {
-  const user = users[req.cookies['user_id']];
+  const user = users[req.session['user_id']];
   const shortURL = req.params.shortURL;
   if (!user) {
     return res.status(401).send('Error 401: unauthorized. Cant delete: Login/register first');
@@ -198,7 +202,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 // POST - handling edit to /urls/:shortURL/edit
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const user = users[req.cookies['user_id']];
+  const user = users[req.session['user_id']];
   const longURL = req.body.longURL;
   if (!user) {
     return res.status(401).send('Error 401: unauthorized. Cant edit: Login/register first');
@@ -225,14 +229,15 @@ app.post("/login", (req, res) => {
     if (!match) {
       return res.status(403).send('Error 403: password doesnt match');
     }
-    res.cookie('user_id', id);
+    req.session['user_id'] = id;
     res.redirect('/urls');
   });
 });
 
 // POST - handling logouts
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  // destroy entire session cookie
+  req.session = null;
   res.redirect('/urls');
 });
 
