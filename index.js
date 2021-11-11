@@ -55,10 +55,10 @@ const generateRandomString = (randomLength) => {
 };
 
 // check if an email already exists in users
-const checkEmailExist = (users, email) =>{
-  for (const user in users) {
-    if (users[user].email === email) {
-      return true;
+const lookUpEmail = (users, email) =>{
+  for (const userId in users) {
+    if (users[userId].email === email) {
+      return userId;
     }
   }
   return false;
@@ -145,8 +145,15 @@ app.post("/urls/:shortURL", (req, res) => {
 
 // POST - handling logins
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie('username', username);
+  const { email, password} = req.body;
+  const id = lookUpEmail(users, email);
+  if (!id) {
+    return res.status(403).send('Error 403: account doesnt exist');
+  }
+  if (users[id].password !== password) {
+    return res.status(403).send('Error 403: password doesnt match');
+  }
+  res.cookie('user_id', id);
   res.redirect('/urls');
 });
 
@@ -162,7 +169,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).send('Error 400: email/password cant be empty');
   }
-  if (checkEmailExist(users, email)) {
+  if (lookUpEmail(users, email)) {
     return res.status(400).send('Error 400: email already exists');
   }
   const id = generateRandomString(6);
