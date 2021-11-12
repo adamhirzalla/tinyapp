@@ -4,22 +4,31 @@ TinyApp is a full stack web application that I built in order to familiarize mys
 
 ## Final Product
 
+- Login Page (Main):
 !["Login Page (Main)"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/login_page.png)
 
+- Registration Page:
 !["Registration Page"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/register_page.png)
 
+- URLs list upon first logging in:
 !["URLs list upon first logging in"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/empty_urls.png)
 
+- Populated URLs list:
 !["Populated URLs list"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/urls_page.png)
 
+- Creating a new TinyURL:
 !["Creating a new TinyURL"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/create_page.png)
 
+- Editing target for an existing TinyURL:
 !["Editing target for an existing TinyURL"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/edit_page.png)
 
+- Accessing URLs list without logging in:
 !["Accessing URLs list without logging in"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/urls_page_no_user.png)
 
+- Error page - example 1:
 !["Error page - example 1"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/error_page_example.png)
 
+- Error page - example 2:
 !["Error page - example 2"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/error_page_example_2.png)
 
 ## Dependencies
