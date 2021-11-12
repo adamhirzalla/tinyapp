@@ -2,6 +2,15 @@
 
 TinyApp is a full stack web application that I built in order to familiarize myself with Node and Express. TinyApp allows users to shorten long URLs and share them around (à la bit.ly).
 
+## Features
+- Shorten any long URL into a 6-char TinyURL to be shared with others
+- View and manage all your URLs through your account's dashboard, from 'My URLs' page
+- Easily Add/Edit/Delete any of your TinyURLs
+- Hashed passwords and Encrypted Cookies to ensure safety of sesitive information
+- Track the number of clicks/visits your TinyURL receives (NEW!)
+- See stats of all visitors by viewing the time and date they viewed your TinyURL (NEW!)
+- Track the number of UNIQUE visitors on your TinyURL (In-progress!)
+
 ## Final Product
 
 - Login Page (Main):
