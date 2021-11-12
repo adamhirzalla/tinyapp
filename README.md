@@ -28,8 +28,11 @@ TinyApp is a full stack web application that I built in order to familiarize mys
 - Creating a new TinyURL:
 !["Creating a new TinyURL"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/create_page.png)
 
-- Editing target for an existing TinyURL:
-!["Editing target for an existing TinyURL"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/edit_page.png)
+- Viewing/editing an existing TinyURL - example 1:
+!["Editing/viewing an existing TinyURL"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/edit_page.png)
+
+- Viewing/editing an existing TinyURL - example 2:
+!["Editing/viewing an existing TinyURL"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/edit_page_2.png)
 
 - Accessing URLs list without logging in:
 !["Accessing URLs list without logging in"](https://github.com/adamhirzalla/tinyapp/blob/master/docs/urls_page_no_user.png)
