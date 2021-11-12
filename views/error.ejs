@@ -6,44 +6,16 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <title>TinyApp - URLs</title>
+  <title>TinyApp - Whoops!</title>
 </head>
 <%- include('./partials/_header') %>
 <body style="background-color: rgb(24,24,24)">
   <main style="margin: 1em;">
     <table class="table text-center table-striped table-bordered table-secondary" style="width: fit-content; margin: auto;">
       <thead style="background-color: rgb(53,53,53);">
-        <% if (!user) { %>
           <tr class="text-warning">
-            <td><strong><a href="/login"><h5>Login</a> or <a href="/register">Register</a> to view your URLs</h5></strong></td>
+            <td><%-error%></td>
           </tr>
-        <% } else { %>
-        <tr>
-          <th class="text-warning" scope="col">Short URL</th>
-          <th class="text-warning" scope="col">Long URL</th>
-          <th class="text-primary" scope="col">Edit</th>
-          <th class="text-danger" scope="col">Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-          <% for(let shortURL in urls) { %>
-              <tr>
-                <td><strong><a href="/u/<%-shortURL%>"><%=shortURL%></a></strong></td>
-                <td><%= urls[shortURL].longURL %></td>
-                <td>
-                  <form method="get" action="/urls/<%-shortURL%>">
-                    <button type="submit" class="btn btn-outline-primary">Edit</button>
-                  </form>
-                </td>
-                <td>
-                  <form method="POST" action="/urls/<%-shortURL%>/delete">
-                    <button type="submit" class="btn btn-outline-danger">Delete</button>
-                  </form>
-                </td>
-              </tr>
-          <% } %>
-        <% } %>
-      </tbody>
     </table>
   </main>
   <!-- Bootstrap JS -->
