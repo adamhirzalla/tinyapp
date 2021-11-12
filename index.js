@@ -2,6 +2,7 @@
 //
 const express = require('express');
 const cookieSession = require('cookie-session');
+const methodOverride = require('method-override');
 const bcrypt = require('bcryptjs');
 const { urlDatabase, users } = require('./database');
 const { generateRandomString, lookUpEmail, ownedURLs } = require('./helpers');
@@ -11,6 +12,7 @@ const { generateRandomString, lookUpEmail, ownedURLs } = require('./helpers');
 // setting ejs as the view engine
 // using express's bodyparser to handle request body from buffer
 // using cookie-session with options -> secret key sets + expiry timer
+// using methodOverride to override with POST having ?_method=DELETE
 // express listning on port 8080
 const app = express();
 const PORT = 8080;
@@ -21,6 +23,7 @@ app.use(cookieSession({
   keys: ['imagine trying', 'to steal', 'my COOKIES', 'OMEGALUL'],
   maxAge: 12 * 60 * 60 * 1000, // expires after 12 hrs
 }));
+app.use(methodOverride('_method'));
 app.listen(PORT, ()=>{
   console.log(`Tinyapp listening on port ${PORT}!`);
 });
@@ -31,10 +34,10 @@ app.listen(PORT, ()=>{
 // GET - / -> root or homepage
 app.get('/', (req,res)=>{
   const user = users[req.session['user_id']];
-  if (user) {
-    res.redirect('/urls');
+  if (!user) {
+    return res.redirect('/login');
   }
-  res.redirect('/login');
+  res.redirect('/urls');
 });
 
 // GET - /register -> registration page allowing users to register w email/pass
@@ -111,7 +114,10 @@ app.get('/u/:shortURL', (req,res)=>{
 // POST - /urls -> handling creating new urls
 app.post("/urls", (req, res) => {
   const user = users[req.session['user_id']];
-  const longURL = `https://www.${req.body.longURL}`;
+  let longURL = req.body.longURL;
+  if (!longURL.includes('https://') && !longURL.includes('http://')) {
+    longURL = `https://www.${longURL}`;
+  }
   if (!user) {
     return res.status(401).send('Error 401: Unauthorized! Cant create URL: Login/Register first.\n');
   }
@@ -141,7 +147,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const user = users[req.session['user_id']];
-  const longURL = req.body.longURL;
+  let longURL = req.body.longURL;
   if (!user) {
     return res.status(401).send('Error 401: Unauthorized! Cant edit: Login/Register first.\n');
   }
@@ -151,8 +157,12 @@ app.post("/urls/:shortURL", (req, res) => {
   if (urlDatabase[shortURL].userID !== user.id) {
     return res.status(401).send('Error 401: Unauthorized. Cant edit: URL does not belong to you.\n');
   }
-  urlDatabase[shortURL].longURL = `https://www.${longURL}`;
+  if (!longURL.includes('https://') && !longURL.includes('http://')) {
+    longURL = `https://www.${longURL}`;
+  }
+  urlDatabase[shortURL] = { longURL };
   urlDatabase[shortURL].userID = user.id;
+  console.log(urlDatabase[shortURL]);
   res.redirect('/urls');
 });
 
@@ -171,6 +181,7 @@ app.post("/login", (req, res) => {
       return res.status(403).render('error', {user, error});
     }
     req.session['user_id'] = id;
+    req.session['example_id'] = 'hellooooo';
     res.redirect('/urls');
   });
 });
