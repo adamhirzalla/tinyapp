@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 // HELPER FUNCTIONS //
 //
 // generate random 6 char string
@@ -35,8 +36,29 @@ const ownedURLs = (allURLs, user) =>{
   return result;
 };
 
+const addVisit = (allURLs, URL) => {
+  // set id to 1 if first visitor, otherwise add 1 from last visitor
+  const visitor_id = allURLs[URL].timestamps.length !== 0 ? allURLs[URL].timestamps[0]['visitor_id'] + 1 : 1;
+  const timestamp = new Date().toLocaleString();
+  const visit = { timestamp, visitor_id };
+  allURLs[URL].timestamps.unshift(visit); // add most recent visit to head of array
+  // add a visit or set to 0 if newly created
+  return allURLs[URL].visits = (++allURLs[URL].visits || 0);
+};
+
+const addUniqueVisit = (allURLs, URL) => {
+  // TODO: Implement unique visitors tracker
+};
+
+const isUnique = () => {
+  // TODO: Implement unique visitors tracker
+};
+
 module.exports = {
   generateRandomString,
   lookUpEmail,
-  ownedURLs
+  ownedURLs,
+  addVisit,
+  addUniqueVisit,
+  isUnique,
 };

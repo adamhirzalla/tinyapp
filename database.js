@@ -4,23 +4,43 @@
 const urlDatabase = {
   "ttv": {
     longURL: "http://www.twitch.tv",
-    userID: 'Adam'
+    userID: 'Adam',
+    visits: 1337,
+    timestamps: [],
+    uniqueVisits: 0,
+    uniqueVisitors: {}, // TODO: uuid cookies for unique visitors
   },
   "rs": {
     longURL: "https://oldschool.runescape.com",
-    userID: 'Adam'
+    userID: 'Adam',
+    visits: 420,
+    timestamps: [],
+    uniqueVisits: 0,
+    uniqueVisitors: {},
   },
   "yt": {
     longURL: "http://www.youtube.com",
-    userID: 'Adam'
+    userID: 'Adam',
+    visits: 0,
+    timestamps: [],
+    uniqueVisits: 0,
+    uniqueVisitors: {},
   },
   "LHL": {
     longURL: "http://www.lighthouselabs.ca",
-    userID: 'dummy1'
+    userID: 'dummy1',
+    visits: 0,
+    timestamps: [],
+    uniqueVisits: 0,
+    uniqueVisitors: {},
   },
   "google": {
     longURL: "http://www.google.ca",
-    userID: 'dummy2'
+    userID: 'dummy2',
+    visits: 0,
+    timestamps: [],
+    uniqueVisits: 0,
+    uniqueVisitors: {},
   }
 };
 

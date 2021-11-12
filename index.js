@@ -5,7 +5,7 @@ const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
 const bcrypt = require('bcryptjs');
 const { urlDatabase, users } = require('./database');
-const { generateRandomString, lookUpEmail, ownedURLs } = require('./helpers');
+const { generateRandomString, lookUpEmail, ownedURLs, addVisit, addUniqueVisit, isUnique } = require('./helpers');
 
 // CONFIG //
 //
@@ -99,7 +99,7 @@ app.get('/urls/:shortURL', (req,res)=>{
 });
 
 // GET - /u/:id -> redirect from /u/:shortURL to longURL
-app.get('/u/:shortURL', (req,res)=>{
+app.get('/u/:shortURL', (req, res)=>{
   const shortURL = req.params.shortURL;
   const user = users[req.session['user_id']];
   if (!urlDatabase[shortURL]) {
@@ -107,6 +107,7 @@ app.get('/u/:shortURL', (req,res)=>{
     return res.status(404).render('error', {user, error});
   }
   const longURL = urlDatabase[shortURL].longURL;
+  addVisit(urlDatabase, shortURL);
   res.redirect(longURL);
 });
 
@@ -122,48 +123,9 @@ app.post("/urls", (req, res) => {
     return res.status(401).send('Error 401: Unauthorized! Cant create URL: Login/Register first.\n');
   }
   const shortURL = generateRandomString(6);
-  urlDatabase[shortURL] = { longURL, userID: user.id };
+  // populate/initialize keys for new url
+  urlDatabase[shortURL] = { longURL, userID: user.id, visits: 0, timestamps: [], uniqueVisits: 0, uniqueVisitors: {} };
   res.redirect(`/urls`);
-});
-
-// POST - urls/:id/delete -> handling delete form /urls/:shortURL/delete
-app.post("/urls/:shortURL/delete", (req, res) => {
-  const user = users[req.session['user_id']];
-  const shortURL = req.params.shortURL;
-  if (!user) {
-    return res.status(401).send('Error 401: Unauthorized! Cant delete: Login/Register first.\n');
-  }
-  if (!urlDatabase[shortURL]) {
-    return res.status(404).send('Error 404: Cant delete: Link does not exist!\n');
-  }
-  if (urlDatabase[shortURL].userID !== user.id) {
-    return res.status(401).send('Error 401: Unauthorized. Cant delete: URL does not belong to you.\n');
-  }
-  delete urlDatabase[shortURL];
-  res.redirect('/urls');
-});
-
-// POST - /urls/:id ->  handling edit to /urls/:shortURL/edit
-app.post("/urls/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL;
-  const user = users[req.session['user_id']];
-  let longURL = req.body.longURL;
-  if (!user) {
-    return res.status(401).send('Error 401: Unauthorized! Cant edit: Login/Register first.\n');
-  }
-  if (!urlDatabase[shortURL]) {
-    return res.status(404).send('Error 404: Cant edit: Link does not exist!\n');
-  }
-  if (urlDatabase[shortURL].userID !== user.id) {
-    return res.status(401).send('Error 401: Unauthorized. Cant edit: URL does not belong to you.\n');
-  }
-  if (!longURL.includes('https://') && !longURL.includes('http://')) {
-    longURL = `https://www.${longURL}`;
-  }
-  urlDatabase[shortURL] = { longURL };
-  urlDatabase[shortURL].userID = user.id;
-  console.log(urlDatabase[shortURL]);
-  res.redirect('/urls');
 });
 
 // POST - /login -> handling logins
@@ -211,4 +173,52 @@ app.post("/register", (req, res) => {
     req.session['user_id'] = id;
     res.redirect('/urls');
   });
+});
+
+// PUT //
+//
+// PUT - /urls/:id ->  handling edit to /urls/:shortURL?_method=PUT
+app.put("/urls/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const user = users[req.session['user_id']];
+  let longURL = req.body.longURL;
+  if (!user) {
+    return res.status(401).send('Error 401: Unauthorized! Cant edit: Login/Register first.\n');
+  }
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send('Error 404: Cant edit: Link does not exist!\n');
+  }
+  if (urlDatabase[shortURL].userID !== user.id) {
+    return res.status(401).send('Error 401: Unauthorized. Cant edit: URL does not belong to you.\n');
+  }
+  if (!longURL.includes('https://') && !longURL.includes('http://')) {
+    longURL = `https://www.${longURL}`;
+  }
+  urlDatabase[shortURL] = { longURL };
+  urlDatabase[shortURL].userID = user.id;
+  // reset all stats for the updated link
+  urlDatabase[shortURL].visits = 0;
+  urlDatabase[shortURL].timestamps = [];
+  urlDatabase[shortURL].uniqueVisits = 0;
+  urlDatabase[shortURL].uniqueVisitors = {};
+  res.redirect('/urls');
+});
+
+// DELETE //
+//
+// DELETE - urls/:id -> handling delete form /urls/:shortURL?_method=DELETE
+app.delete("/urls/:shortURL", (req, res) => {
+  const user = users[req.session['user_id']];
+  const shortURL = req.params.shortURL;
+  if (!user) {
+    return res.status(401).send('Error 401: Unauthorized! Cant delete: Login/Register first.\n');
+  }
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send('Error 404: Cant delete: Link does not exist!\n');
+  }
+  if (urlDatabase[shortURL].userID !== user.id) {
+    return res.status(401).send('Error 401: Unauthorized. Cant delete: URL does not belong to you.\n');
+  }
+  delete urlDatabase[shortURL];
+  res.redirect('/urls');
 });

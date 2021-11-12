@@ -12,10 +12,11 @@
       <div class="card-body text-warning">
         <h5 class="card-title ">TinyURL for: <a href="<%- urls[shortURL].longURL %>" class="text-light"><%= urls[shortURL].longURL %></a></h5>
         <p class="card-text">Short URL: <a href="/u/<%-shortURL%>"><%=shortURL%></a></p>
+        <p class="card-text">Total clicks: <span class="text-success ml-2"><%=urls[shortURL].visits%></span></p>
       </div>
     <div class="card-footer text-muted" style="background-color: rgb(53,53,53);">
       <div class="card-body my-auto">
-        <form class="form-inline justify-content-center" action="/urls/<%-shortURL%>" method="POST">
+        <form class="form-inline justify-content-center" action="/urls/<%-shortURL%>?_method=PUT" method="POST">
           <div class="form-group mb-2 ml-auto mr-auto">
             <label class="text-warning" for="longURL">New URL:</label>
             <div class="input-group mb-auto ml-2 mr-1">
@@ -30,6 +31,30 @@
       </div>
     </div>
   </div>
+  <div class="table-wrapper-scroll-y my-custom-scrollbar">
+    <table class="table text-center table-striped table-bordered table-secondary my-3" style="width: fit-content; margin: auto;">
+      <thead style="background-color: rgb(53,53,53);">
+        <tr>
+          <th class="text-warning" colspan="2" scope="col">Most recent visits</th>
+        </tr>
+      </thead>
+      <tbody class="text-dark">
+        <% if (urls[shortURL].timestamps.length <= 0) { %>
+          <tr>
+            <td colspan="4"><strong>None...😦</strong></td>
+          </tr>
+          <%}%>
+        <%for (let visit of urls[shortURL].timestamps) {%>
+          <tr>
+            <th scope="col"><%=visit['visitor_id']%></th>
+            <th scope="col"><%=visit['timestamp']%></th>
+          </tr>
+        <%}%>
+        
+      </tbody>
+    </table>
+  </div>
+  
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
