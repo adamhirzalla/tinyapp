@@ -2,41 +2,46 @@
 //
 // URLs
 const urlDatabase = {
-  "ttv": {
-    longURL: "http://www.twitch.tv",
+  "TTV": {
+    longURL: "https://www.twitch.tv",
     userID: 'Adam',
+    creationDate: 'Thu Nov 11 2021',
     visits: 1337,
     timestamps: [],
     uniqueVisits: 0,
-    uniqueVisitors: {}, // TODO: uuid cookies for unique visitors
+    uniqueVisitors: {},
   },
-  "rs": {
+  "RS": {
     longURL: "https://oldschool.runescape.com",
     userID: 'Adam',
+    creationDate: 'Fri Nov 12 2021',
     visits: 420,
     timestamps: [],
     uniqueVisits: 0,
     uniqueVisitors: {},
   },
-  "yt": {
-    longURL: "http://www.youtube.com",
+  "YT": {
+    longURL: "https://www.youtube.com",
     userID: 'Adam',
+    creationDate: 'Sat Nov 13 2021',
     visits: 0,
     timestamps: [],
     uniqueVisits: 0,
     uniqueVisitors: {},
   },
   "LHL": {
-    longURL: "http://www.lighthouselabs.ca",
+    longURL: "https://www.lighthouselabs.ca",
     userID: 'dummy1',
+    creationDate: 'Tue Jan 3 1337',
     visits: 0,
     timestamps: [],
     uniqueVisits: 0,
     uniqueVisitors: {},
   },
   "google": {
-    longURL: "http://www.google.ca",
+    longURL: "https://www.google.ca",
     userID: 'dummy2',
+    creationDate: 'Wed Dec 2 1009',
     visits: 0,
     timestamps: [],
     uniqueVisits: 0,

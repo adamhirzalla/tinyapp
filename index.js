@@ -106,8 +106,23 @@ app.get('/u/:shortURL', (req, res)=>{
     const error = '<strong class="text-danger">Error 404:</strong> Link does not exist!';
     return res.status(404).render('error', {user, error});
   }
-  const longURL = urlDatabase[shortURL].longURL;
+  
+  // ANALYTICS //
   addVisit(urlDatabase, shortURL);
+  let visitorID = req.session['visitor_id'];
+  if (!visitorID) {
+    // if no visitor_id cookie found, set one and increment unique
+    // visits while adding ID to shortURL db
+    visitorID = generateRandomString(5);
+    req.session['visitor_id'] = visitorID;
+    addUniqueVisit(urlDatabase, shortURL, visitorID);
+  } else if (isUnique(urlDatabase, shortURL, visitorID)) {
+    // already has a visitor_id cookie, but is a unique visitor
+    // increment unique visits and add ID to db
+    addUniqueVisit(urlDatabase, shortURL, visitorID);
+  }
+
+  const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -124,7 +139,8 @@ app.post("/urls", (req, res) => {
   }
   const shortURL = generateRandomString(6);
   // populate/initialize keys for new url
-  urlDatabase[shortURL] = { longURL, userID: user.id, visits: 0, timestamps: [], uniqueVisits: 0, uniqueVisitors: {} };
+  const creationDate = new Date().toDateString();
+  urlDatabase[shortURL] = { longURL, userID: user.id, creationDate, visits: 0, timestamps: [], uniqueVisits: 0, uniqueVisitors: {} };
   res.redirect(`/urls`);
 });
 
@@ -143,7 +159,6 @@ app.post("/login", (req, res) => {
       return res.status(403).render('error', {user, error});
     }
     req.session['user_id'] = id;
-    req.session['example_id'] = 'hellooooo';
     res.redirect('/urls');
   });
 });
@@ -196,7 +211,7 @@ app.put("/urls/:shortURL", (req, res) => {
   }
   urlDatabase[shortURL] = { longURL };
   urlDatabase[shortURL].userID = user.id;
-  // reset all stats for the updated link
+  // reset all old stats for the updated link
   urlDatabase[shortURL].visits = 0;
   urlDatabase[shortURL].timestamps = [];
   urlDatabase[shortURL].uniqueVisits = 0;

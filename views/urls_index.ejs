@@ -19,8 +19,11 @@
           </tr>
         <% } else { %>
         <tr>
+          <th class="text-warning" scope="col">Created</th>
           <th class="text-warning" scope="col">Short URL</th>
           <th class="text-warning" scope="col">Long URL</th>
+          <th class="text-warning" scope="col"><span class="text-success">Total 👀</span></th>
+          <th class="text-warning" scope="col"><span class="text-success">Unique 👀</span></th>
           <th class="text-primary" scope="col">Edit</th>
           <th class="text-danger" scope="col">Delete</th>
         </tr>
@@ -33,8 +36,11 @@
         <% } %>
           <% for(let shortURL in urls) { %>
               <tr>
+                <td class=""><strong><%= urls[shortURL].creationDate%></strong></td>
                 <td><strong><a href="/u/<%-shortURL%>"><%=shortURL%></a></strong></td>
-                <td><%= urls[shortURL].longURL %></td>
+                <td class="text-dark"> <%= urls[shortURL].longURL %></td>
+                <td><strong><i><%= urls[shortURL].visits %></strong></i></td>
+                <td><strong><i><%= urls[shortURL].uniqueVisits %></strong></i></td>
                 <td>
                   <form method="get" action="/urls/<%-shortURL%>">
                     <button type="submit" class="btn btn-outline-primary">Edit</button>

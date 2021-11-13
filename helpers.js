@@ -28,8 +28,8 @@ const ownedURLs = (allURLs, user) =>{
     const userId = user.id;
     for (const shortURL in allURLs) {
       if (allURLs[shortURL].userID === userId) {
-        const { longURL, userID } = allURLs[shortURL];
-        result[shortURL] = { longURL, userID };
+        const url = allURLs[shortURL];
+        result[shortURL] = url;
       }
     }
   }
@@ -40,18 +40,21 @@ const addVisit = (allURLs, URL) => {
   // set id to 1 if first visitor, otherwise add 1 from last visitor
   const visitor_id = allURLs[URL].timestamps.length !== 0 ? allURLs[URL].timestamps[0]['visitor_id'] + 1 : 1;
   const timestamp = new Date().toLocaleString();
-  const visit = { timestamp, visitor_id };
+  const visit = { visitor_id, timestamp };
   allURLs[URL].timestamps.unshift(visit); // add most recent visit to head of array
   // add a visit or set to 0 if newly created
   return allURLs[URL].visits = (++allURLs[URL].visits || 0);
 };
 
-const addUniqueVisit = (allURLs, URL) => {
-  // TODO: Implement unique visitors tracker
+const addUniqueVisit = (allURLs, URL, visitorID) => {
+  // add the visitor_id cookie value to db as key with a value of
+  // date visited (or any value really, but date makes sense)
+  allURLs[URL].uniqueVisitors[visitorID] = new Date().toLocaleString();
+  allURLs[URL].uniqueVisits++;
 };
 
-const isUnique = () => {
-  // TODO: Implement unique visitors tracker
+const isUnique = (allURLs, URL, visitorID) => {
+  return allURLs[URL].uniqueVisitors[visitorID] ? false : true;
 };
 
 module.exports = {
