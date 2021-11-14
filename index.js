@@ -209,7 +209,7 @@ app.put("/urls/:shortURL", (req, res) => {
   if (!longURL.includes('https://') && !longURL.includes('http://')) {
     longURL = `https://www.${longURL}`;
   }
-  urlDatabase[shortURL] = { longURL };
+  urlDatabase[shortURL].longURL = longURL;
   urlDatabase[shortURL].userID = user.id;
   // reset all old stats for the updated link
   urlDatabase[shortURL].visits = 0;
