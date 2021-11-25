@@ -15,7 +15,7 @@ const { generateRandomString, lookUpEmail, ownedURLs, addVisit, addUniqueVisit, 
 // using methodOverride to override with POST having ?_method=DELETE
 // express listning on port 8080
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 app.use(cookieSession({
