@@ -51,7 +51,7 @@ TinyApp is a full stack web application that I built in order to familiarize mys
 
 ## Getting Started
 
-- You can check and use the app on [tinyapp.hirzalla.ca](tinyapp.hirzalla.ca)
+- You can check and use the app on [tinyapp.hirzalla.ca](https://tinyapp.hirzalla.ca/)
 - Alternatively, install all dependencies (using the `npm install` command).
 - Run the development web server using the `node index.js` command.
 - Navigate to http://localhost:8080/ to get started!
